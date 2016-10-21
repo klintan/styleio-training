@@ -1,0 +1,10 @@
+*.pyc
+.DS_Store
+data
+wallpapers
+floors
+tiles
+*.pickle
+*.txt
+runs
+*.html
