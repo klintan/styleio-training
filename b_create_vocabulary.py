@@ -26,7 +26,7 @@ from sklearn.cluster import MiniBatchKMeans
 logging.basicConfig(level=logging.INFO)
 
 
-class vocabulary:
+class Vocabulary:
     def __init__(self,imgs_path, feature_type, img_type='test', vocab_size=800):
         self.im_list = imtools.get_imlist(imgs_path)
         self.img_type = img_type
@@ -44,11 +44,11 @@ class vocabulary:
         for idx,image_name in enumerate(self.im_list):
             self.logger.debug('Processing image %s, %s out of %s', image_name, idx, len(self.im_list))
             try:
-                gray_img = rgb2gray(np.array(Image.open(image_name)))
+                img = np.array(Image.open(image_name))
             except Exception as e:
                 self.logger('Failed to load image %s', e)
 
-            features = feature_extractor.extractFeature(gray_img)
+            features = feature_extractor.extractFeature(img)
             self.logger.debug('Feature shape %s', features.shape)
 
             all_features.append(features.reshape(-1, 200))
@@ -72,10 +72,7 @@ class vocabulary:
 
 
 if __name__ == '__main__':
-    imgs_path = sys.argv[1]
-    #init_size = vocab_size*3
-
-    voc = vocabulary(imgs_path=imgs_path, vocab_size = 800, feature_type='daisy')
+    voc = vocabulary(imgs_path=sys.argv[1], vocab_size = 800, feature_type='daisy')
     all_features = voc.feature_extraction()
     voc.create_vocabulary(all_features)
     voc.save_vocabulary()

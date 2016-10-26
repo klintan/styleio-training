@@ -20,10 +20,10 @@ import logging
 #TODO
 #Error handling:
 #File not found, directory not created
-class prepareImages:
+class PrepareImages:
     def __init__(self, path, size=[200,200]):
         self.logger = logging.getLogger(__name__)
-        self.path = sys.argv[1]
+        self.path = path
         self.im_list = imtools.get_imlist(path)
         self.size = size#200,200
 
