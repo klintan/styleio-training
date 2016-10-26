@@ -14,7 +14,7 @@ from skimage.color import rgb2gray
 
 class extract_features:
    'Common base class for extracting features'
-   model = 0
+   #model = 0
 
    def __init__(self, model):
       self.model = model

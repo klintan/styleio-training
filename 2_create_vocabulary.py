@@ -12,7 +12,8 @@ import imtools
 import os
 import pickle
 from PIL import Image
-
+from extract_features import extract_features
+import logging
 #import PIL.Image
 #sys.modules['Image'] = PIL.Image
 #import Image
@@ -22,57 +23,64 @@ from skimage.color import rgb2gray
 from sklearn.cluster import KMeans
 from sklearn.cluster import MiniBatchKMeans
 
+logging.basicConfig(level=logging.INFO)
+
+
 class vocabulary:
-    def __init__(self,img_type,vocab_size=800,feature):
+    def __init__(self,imgs_path, feature_type, img_type='test', vocab_size=800):
+        self.im_list = imtools.get_imlist(imgs_path)
         self.img_type = img_type
         self.vocab_size = vocab_size
-        self.feature = feature
+        self.feature_type = feature_type
+        self.vocab_model = None
+        self.logger = logging.getLogger(__name__)
+
+    def feature_extraction(self):
+        self.logger.info('Start feature extraction...')
+        feature_extractor = extract_features(self.feature_type)
+
+        #Feature list
+        all_features = []
+        for idx,image_name in enumerate(self.im_list):
+            self.logger.debug('Processing image %s, %s out of %s', image_name, idx, len(self.im_list))
+            try:
+                gray_img = rgb2gray(np.array(Image.open(image_name)))
+            except Exception as e:
+                self.logger('Failed to load image %s', e)
+
+            features = feature_extractor.extractFeature(gray_img)
+            self.logger.debug('Feature shape %s', features.shape)
+
+            all_features.append(features.reshape(-1, 200))
+        self.logger.info('Finished feature extraction')
+        return all_features
+
+    def create_vocabulary(sefl, feature_list):
+        self.logger.info('Start vocabulary creation')
+        X = np.vstack(all_features)
+        self.vocab_model = MiniBatchKMeans(n_clusters=vocab_size,max_iter=200,verbose=1)
+        #km = KMeans(n_clusters=200,n_jobs=-1,verbose=1)
+        self.vocab_model.fit(X)
+        self.logger.info('Finished vocabulary creation')
+
+    def save_vocabulary(self):
+        self.logger.info('Save vocabulary')
+        f = open(sys.argv[1]+'_vocab.pickle', 'w')
+        pickle.dump(self.vocab_model,f)
+        f.close()
+        self.logger.info('Vocabulary saved succesfully')
+
 
 if __name__ == '__main__':
-    path = sys.argv[1]
-    vocab_size = 800
-    init_size = vocab_size*3
+    imgs_path = sys.argv[1]
+    #init_size = vocab_size*3
 
-    print path
-    im_list = imtools.get_imlist(path)
-
-    print im_list
-
-    #%%time
-    all_features = []
-    for idx,image_name in enumerate(im_list):
-        gray_img = rgb2gray(np.array(Image.open(image_name)))
-        features = daisy(gray_img, step=8)
-        print features.shape
-        print image_name
-
-        all_features.append(features.reshape(-1, 200))
-        print idx
-        #print features.reshape(-1, 200)
-        # f = open('data/features/'+sys.argv[1]+'_'+os.path.basename(image_name)+'.feature', 'w')
-        # pickle.dump(features,f)
-        # f.close()
+    voc = vocabulary(imgs_path=imgs_path, vocab_size = 800, feature_type='daisy')
+    all_features = voc.feature_extraction()
+    voc.create_vocabulary(all_features)
+    voc.save_vocabulary()
 
 
 
-    X = np.vstack(all_features)
-    print X.shape
 
-    # f = open('data/features/'+sys.argv[1]+'_all_features.feature', 'w')
-    # pickle.dump(all_features,f)
-    # f.close()
-
-    #f = open(sys.argv[1]+'_features.pickle', 'w')
-    #pickle.dump(km,f)
-    #f.close()
-
-    #%%time
-    km = MiniBatchKMeans(n_clusters=vocab_size,max_iter=200,verbose=1)
-    #km = KMeans(n_clusters=200,n_jobs=-1,verbose=1)
-    km.fit(X)
-
-
-    f = open(sys.argv[1]+'_vocab.pickle', 'w')
-    pickle.dump(km,f)
-    f.close()
 

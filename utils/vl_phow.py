@@ -10,6 +10,14 @@ Python rewrite of https://github.com/vlfeat/vlfeat/blob/master/toolbox/sift/vl_p
 """
 
 
+## This needs to be rewritten for OpenCV
+#
+#dense=cv2.FeatureDetector_create("Dense")
+#kp=dense.detect(imgGray)
+#kp,des=sift.compute(imgGray,kp)
+#
+#http://stackoverflow.com/questions/20146570/opencv-python-dense-sift
+
 def vl_phow(im,
             verbose=True,
             fast=True,
@@ -155,6 +163,6 @@ class DSiftOptions(object):
         self.step = opts.step
 
 if __name__ == "__main__":
-    from scipy.misc import imread 
+    from scipy.misc import imread
     im = imread('image_0001.jpg')
-    frames, descrs = vl_phow(array(im, 'float32') / 255.0)    
+    frames, descrs = vl_phow(array(im, 'float32') / 255.0)
