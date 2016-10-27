@@ -6,6 +6,9 @@ from pprint import pprint
 
 from a_prepare_image_set import PrepareImages
 from b_create_vocabulary import Vocabulary
+from c_create_histograms import PatternHistograms
+from d_tfidf import TfIdf
+from e_compute_comparisons import ImageSimilarity
 
 default_args = {
     'owner': 'styleio',
@@ -41,11 +44,23 @@ def create_vocab(**kwargs):
     voc.save_vocabulary()
     return 'Created vocabulary'
 
-def create_vocab(**kwargs):
+def create_hists(**kwargs):
     ph = PatternHistograms(path=kwargs['imgdir'], feature_type='daisy')
     hists = ph.create_histogram()
     ph.save_histograms(hists)
-    return 'Created vocabulary'
+    return 'Created histograms'
+
+def create_hists(**kwargs):
+    ph = PatternHistograms(path=kwargs['imgdir'], feature_type='daisy')
+    hists = ph.create_histogram()
+    ph.save_histograms(hists)
+    return 'Created histograms'
+
+def compute_similarity(**kwargs):
+    image_similarity = ImageSimilarity(path=sys.argv[1])
+    image_similarity.compute_image_similarity()
+    return 'Computed histograms distance'
+
 
 create_temp_folder = """
 echo "Create folder"
@@ -71,6 +86,13 @@ create_vocabulary = PythonOperator(
     op_kwargs={'imgdir': 'wallpapers'},
     dag=dag)
 
+create_histograms= PythonOperator(
+    task_id='create_histograms',
+    provide_context=True,
+    python_callable=create_hists,
+    op_kwargs={'imgdir': 'wallpapers'},
+    dag=dag)
+
 
 create_temporary_image_directory = BashOperator(
     task_id='create_dir',
@@ -86,6 +108,7 @@ delete_temporary_image_directory = BashOperator(
     dag=dag)
 
 image_preparation.set_upstream(create_temporary_image_directory)
+create_vocabulary.set_upstream(image_preparation)
 create_vocabulary.set_upstream(image_preparation)
 delete_temporary_image_directory.set_upstream(create_vocabulary)
 
