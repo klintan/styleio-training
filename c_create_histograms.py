@@ -49,7 +49,7 @@ class PatternHistograms:
             try:
                 img = np.array(Image.open(image_name))
             except Exception as e:
-                self.logger('Failed to load image %s', e)
+                self.logger.error('Failed to load image %s', e)
             features = feature_extractor.extractFeature(img)
             words = km.predict(features.reshape(-1, 200))
             ##counts = coo_matrix((np.ones(len(words)), (1, words)), shape=(1, 500)).toarray()
@@ -64,7 +64,7 @@ class PatternHistograms:
     def normalize_hIstogram(self, histogram):
         return [word / sum(histogram) for word in float(histogram)]
 
-    #normalize the histograms
+    #save the histograms
     def save_histograms(self, hists):
             f1 = open(self.path+'_histograms.pickle','w')
             pickle.dump(hists,f1)
