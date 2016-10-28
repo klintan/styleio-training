@@ -10,6 +10,7 @@ import imtools
 import pickle
 import cPickle
 import numpy as np
+from jinja2 import Template, Environment, PackageLoader
 
 logging.basicConfig(level=logging.INFO)
 
@@ -22,6 +23,10 @@ class EvaluationFramework():
         self.load_histograms()
         self.logger = logging.getLogger(__name__)
         self.html= None
+        #jinja 2
+        self.template = None
+        #self.env = Environment(loader=PackageLoader('yourapplication', 'templates'))
+
 
     def load_comparison(self):
         self.logger.info('Loading comparison scores...')
@@ -37,6 +42,11 @@ class EvaluationFramework():
         self.logger.info('Succesfully loaded comparison scores')
 
         def generate_html(self):
+            #jinja 2
+            # template = env.get_template('layout.html')
+            # self.template = Template('Hello {{ name }}!')
+            # template.render(name='John Doe')
+            # old
             self.logger.info('Generate HTML...')
             self.html = '<html><head></head><body>'
             json = []
@@ -44,6 +54,7 @@ class EvaluationFramework():
                 sort_index = np.argsort(dist)
                 top20 = sort_index[0:20]
                 json.append({"img":"","similar":[]})
+                img_index = str(idx)
                 self.html+="<p>"+str(idx)+"</p>"
                 for idy,image in enumerate(top20):
 
@@ -52,6 +63,7 @@ class EvaluationFramework():
                         continue
 
                     self.html += '<img src='+ self.im_list[image]+'>'
+                    img_source = self.im_list[image]
                     #self.html += '<p>Score:'+ str(dist[image])+'</p>'
                     json[idx]['similar'].append({"img":self.im_list[image],"pattern": str(dist[image]),"color":""})
 
@@ -65,6 +77,9 @@ class EvaluationFramework():
         f1 = open(self.path+'.html', 'wb')
         cPickle.dump(self.html,f1)
         f1.close()
+        # jinja2
+        template.render(the='variables', go='here')
+
 
 
 if __name__ == '__main__':

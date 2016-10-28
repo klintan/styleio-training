@@ -15,7 +15,7 @@ import logging
 
 from scipy.cluster.vq import *
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 class TfIdf():
     def __init__(self, path):

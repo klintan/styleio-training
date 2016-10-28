@@ -12,6 +12,7 @@ import pickle
 import cPickle
 import imtools
 import numpy as np
+import logging
 
 logging.basicConfig(level=logging.INFO)
 
@@ -21,10 +22,10 @@ class ImageSimilarity():
         self.histograms = None
         self.im_list = imtools.get_imlist(path)
         self.all_scores=[]
-        self.load_histograms()
         self.logger = logging.getLogger(__name__)
+        self.load_histograms()
 
-    def load_histograms(self)
+    def load_histograms(self):
             self.logger.info('Loading histograms...')
             try:
                 f = open(self.path+'_histograms.pickle', 'r')
@@ -35,7 +36,7 @@ class ImageSimilarity():
             except Exception as e:
                 self.logger.error('Failed to load histograms %s', e)
 
-    def load_tfidf(self)
+    def load_tfidf(self):
             self.logger.info('Loading TfIdf...')
             try:
                 f = open(self.path+'_tfidf.pickle', 'r')
@@ -46,20 +47,22 @@ class ImageSimilarity():
             except Exception as e:
                 self.logger.error('Failed to load TfIdf %s', e)
 
-    def tfidf_weighing(self, histograms):
+    def tfidf_weighing(self):
         #compute new histograms with weights
-        for idx,hist in enumerate(histograms):
+        for idx,hist in enumerate(self.histograms):
             #TFIDF weighing
             hist = hist*all_scores[idx]
 
     def compute_image_similarity(self):
+        self.logger.info('Computing histogram distances...')
         dist_function = dist.distance('chisquared')
         temp_dist = []
         all_dist = []
         #print dist_function
         for idx,h1 in enumerate(self.histograms):
+            self.logger.debug('Computing histogram distance for histogram %s of %s', idx, len(self.histograms))
             f1 = open(sys.argv[1]+'_comparison.pickle', mode='a+b')
-            for h2 in histograms:
+            for h2 in self.histograms:
                 vector_distance = dist_function.compute_distance(h1,h2)
                 temp_dist.append(vector_distance)
             cPickle.dump(temp_dist,f1)
@@ -75,5 +78,5 @@ class ImageSimilarity():
 # f1.close()
 
 if __name__ == '__main__':
-image_similarity = ImageSimilarity(path=sys.argv[1])
-image_similarity.compute_image_similarity()
+    image_similarity = ImageSimilarity(path=sys.argv[1])
+    image_similarity.compute_image_similarity()

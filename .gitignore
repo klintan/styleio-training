@@ -12,3 +12,4 @@ wallpapers_new
 **/convnets-keras
 **/tiefvision
 **/deep-learning-models
+*.h5
