@@ -9,3 +9,6 @@ tiles
 runs
 *.html
 wallpapers_new
+**/convnets-keras
+**/tiefvision
+**/deep-learning-models

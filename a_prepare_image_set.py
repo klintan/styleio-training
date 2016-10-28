@@ -43,5 +43,5 @@ class PrepareImages:
         self.logger.info('Finished processing images')
 
 if __name__ == '__main__':
-    prepIm = prepareImages(sys.argv[1])
+    prepIm = PrepareImages(sys.argv[1])
     prepIm.imagePrep()

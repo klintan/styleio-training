@@ -12,7 +12,7 @@ import imtools
 import os
 import pickle
 from PIL import Image
-from extract_features import extract_features
+from extract_features import ExtractFeatures
 import logging
 #import PIL.Image
 #sys.modules['Image'] = PIL.Image
@@ -37,7 +37,7 @@ class Vocabulary:
 
     def feature_extraction(self):
         self.logger.info('Start feature extraction...')
-        feature_extractor = extract_features(self.feature_type)
+        feature_extractor = ExtractFeatures(self.feature_type)
 
         #Feature list
         all_features = []
@@ -55,10 +55,10 @@ class Vocabulary:
         self.logger.info('Finished feature extraction')
         return all_features
 
-    def create_vocabulary(sefl, feature_list):
+    def create_vocabulary(self, feature_list):
         self.logger.info('Start vocabulary creation')
         X = np.vstack(all_features)
-        self.vocab_model = MiniBatchKMeans(n_clusters=vocab_size,max_iter=200,verbose=1)
+        self.vocab_model = MiniBatchKMeans(n_clusters=self.vocab_size,max_iter=50,verbose=1)
         #km = KMeans(n_clusters=200,n_jobs=-1,verbose=1)
         self.vocab_model.fit(X)
         self.logger.info('Finished vocabulary creation')
@@ -72,7 +72,7 @@ class Vocabulary:
 
 
 if __name__ == '__main__':
-    voc = vocabulary(imgs_path=sys.argv[1], vocab_size = 800, feature_type='daisy')
+    voc = Vocabulary(imgs_path=sys.argv[1], vocab_size = 800, feature_type='daisy')
     all_features = voc.feature_extraction()
     voc.create_vocabulary(all_features)
     voc.save_vocabulary()

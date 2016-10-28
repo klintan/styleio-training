@@ -5,12 +5,13 @@
 
 """
 import numpy as np
-import Image
+from PIL import Image
 import sys
 sys.path.append('utils')
 import imtools
 import os
 import pickle
+import logging
 
 from scipy.cluster.vq import *
 
@@ -22,10 +23,10 @@ class TfIdf():
         self.histograms = None
         self.im_list = imtools.get_imlist(path)
         self.all_scores=[]
-        self.load_histograms()
         self.logger = logging.getLogger(__name__)
+        self.load_histograms()
 
-    def load_histograms(self)
+    def load_histograms(self):
         self.logger.info('Loading histograms...')
         try:
             f = open(self.path+'_histograms.pickle', 'r')
@@ -59,7 +60,7 @@ class TfIdf():
 
     #tfidf(word, im, im_list) computes the TF-IDF score.
     def tfidf(self, wordidx,word, im, histograms):
-        return tf(word, im) * idf(wordidx, word, histograms)
+        return self.tf(word, im) * self.idf(wordidx, word, histograms)
 
     #tfidf(word, im, im_list) computes the TF-IDF score.
     def save_tfidf(self):
@@ -79,6 +80,6 @@ class TfIdf():
 
 
 if __name__ == '__main__':
-tfidf = TfIdf(path=sys.argv[1])
-tfidf.compute_tfidf_scores()
+    tfidf = TfIdf(path=sys.argv[1])
+    tfidf.compute_tfidf_scores()
 

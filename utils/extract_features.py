@@ -12,7 +12,7 @@ from skimage.feature import ORB
 from skimage.feature import local_binary_pattern
 from skimage.color import rgb2gray
 
-class extract_features:
+class ExtractFeatures:
    'Common base class for extracting features'
    #model = 0
 
