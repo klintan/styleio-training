@@ -13,3 +13,7 @@ wallpapers_new
 **/tiefvision
 **/deep-learning-models
 *.h5
+preview
+wallpapers_processed
+test_preprocessing.py
+test

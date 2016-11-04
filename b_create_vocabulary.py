@@ -14,16 +14,13 @@ import pickle
 from PIL import Image
 from extract_features import ExtractFeatures
 import logging
-#import PIL.Image
-#sys.modules['Image'] = PIL.Image
-#import Image
 
 from skimage.feature import daisy
 from skimage.color import rgb2gray
 from sklearn.cluster import KMeans
 from sklearn.cluster import MiniBatchKMeans
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 
 class Vocabulary:

@@ -10,6 +10,7 @@ from scipy.spatial.distance import hamming
 from scipy.spatial.distance import euclidean
 from scipy.spatial.distance import cityblock
 from scipy.spatial.distance import cityblock
+#from pyemd import emd
 
 import numpy as np
 

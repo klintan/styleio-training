@@ -45,7 +45,6 @@ class TfIdf():
             if im[wordidx]>0:
                 count+=1
 
-        #print "Total no of docs containing the word"
         #word needs to be the index  in im of the word. If it is >0 it contains the word.
         return count
         #return sum(1 for im in histograms if im[wordidx] >0)

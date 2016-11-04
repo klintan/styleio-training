@@ -22,7 +22,7 @@ from sklearn.cluster import KMeans
 from sklearn.cluster import MiniBatchKMeans
 from scipy.sparse import coo_matrix
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 class PatternHistograms:
     def __init__(self,path, feature_type, vocab_size=800):
@@ -37,7 +37,7 @@ class PatternHistograms:
             f = open(self.path+'_vocab.pickle', 'r')
             self.km = pickle.load(f)
 
-    def create_histogram(self):
+    def create_histogram(self, normalize_histogram=False):
         counts=[]
         words=[]
         word_occurences=[]
@@ -54,16 +54,19 @@ class PatternHistograms:
                 self.logger.error('Failed to load image %s', e)
             features = fe.extractFeature(img)
             words = self.km.predict(features.reshape(-1, 200))
-            ##counts = coo_matrix((np.ones(len(words)), (1, words)), shape=(1, 500)).toarray()
-            ##counts = coo_matrix((np.ones(len(words)), (1,words)), shape=(1, 500)).toarray()
-            hists.append(np.bincount(words,minlength = self.vocab_size))
+
+            histogram = np.bincount(words,minlength = self.vocab_size)
+            if normalize_histogram:
+               histogram = self.nnormalize_histogram(histogram)
+
+            hists.append(histogram)
             words_1.append(words)
         self.logger.debug('')
         self.logger.info('Finished histogram creation')
         return hists
 
     #normalize the histograms
-    def normalize_hIstogram(self, histogram):
+    def normalize_histogram(self, histogram):
         return [word / sum(histogram) for word in float(histogram)]
 
     #save the histograms
@@ -74,6 +77,6 @@ class PatternHistograms:
 
 if __name__ == '__main__':
     ph = PatternHistograms(path=sys.argv[1], feature_type='daisy', vocab_size=800)
-    hists = ph.create_histogram()
+    hists = ph.create_histogram(normalize_histogram=False)
     ph.save_histograms(hists)
 
