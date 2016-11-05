@@ -64,7 +64,7 @@ class TfIdf():
     #tfidf(word, im, im_list) computes the TF-IDF score.
     def save_tfidf(self):
         self.logger.info('Saving tfidf...')
-        f1 = open(sys.argv[1]+'_tfidf.pickle','w')
+        f1 = open(self.path +'_tfidf.pickle','w')
         pickle.dump(self.all_scores,f1)
         f1.close()
 

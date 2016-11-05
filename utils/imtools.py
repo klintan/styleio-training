@@ -13,7 +13,6 @@ sys.modules['Image'] = PIL.Image
 from numpy import *
 
 
-
 def get_imlist(path):
     """    Returns a list of filenames for
         all jpg images in a directory. """

@@ -15,18 +15,16 @@ from PIL import Image
 from extract_features import ExtractFeatures
 import logging
 
-from skimage.feature import daisy
-from skimage.color import rgb2gray
 from sklearn.cluster import KMeans
 from sklearn.cluster import MiniBatchKMeans
 
 logging.basicConfig(level=logging.DEBUG)
 
-
 class Vocabulary:
-    def __init__(self,imgs_path, feature_type, img_type='test', vocab_size=800):
+    def __init__(self,path, feature_type, img_type='test', vocab_size=800):
         self.im_list = imtools.get_imlist(imgs_path)
         self.img_type = img_type
+        self.path = path
         self.vocab_size = vocab_size
         self.feature_type = feature_type
         self.vocab_model = None
@@ -62,14 +60,14 @@ class Vocabulary:
 
     def save_vocabulary(self):
         self.logger.info('Save vocabulary')
-        f = open(sys.argv[1]+'_vocab.pickle', 'w')
+        f = open(self.path+'_vocab.pickle', 'w')
         pickle.dump(self.vocab_model,f)
         f.close()
         self.logger.info('Vocabulary saved succesfully')
 
 
 if __name__ == '__main__':
-    voc = Vocabulary(imgs_path=sys.argv[1], vocab_size = 800, feature_type='daisy')
+    voc = Vocabulary(path=sys.argv[1], vocab_size = 800, feature_type='daisy')
     all_features = voc.feature_extraction()
     voc.create_vocabulary(all_features)
     voc.save_vocabulary()

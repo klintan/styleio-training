@@ -16,11 +16,8 @@ import logging
 
 from extract_features import ExtractFeatures
 
-from skimage.feature import daisy
-from skimage.color import rgb2gray
 from sklearn.cluster import KMeans
 from sklearn.cluster import MiniBatchKMeans
-from scipy.sparse import coo_matrix
 
 logging.basicConfig(level=logging.DEBUG)
 
