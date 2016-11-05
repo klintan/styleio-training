@@ -64,10 +64,11 @@ class ImageSimilarity():
             self.logger.error('Failed to load TfIdf %s', e)
 
     def tfidf_weighing(self):
+        self.logger.info('Computing TFIDF weighing comparison')
         #compute new histograms with weights
         for idx,hist in enumerate(self.histograms):
             #TFIDF weighing
-            hist = hist*self.all_scores[idx]
+            self.histograms[idx] = hist*self.all_scores[idx]
 
     def computeDistance(self, h1):
         temp_dist = []
@@ -76,82 +77,8 @@ class ImageSimilarity():
             temp_dist.append(vector_distance)
         return temp_dist
 
-    def compute_comparison_parallel(self):
-        # what are your inputs, and what operation do you want to
-        # perform on each input. For example...
-        num_cores = multiprocessing.cpu_count()
-        for idx,h1 in enumerate(self.histograms):
-            self.logger.debug('Computing histogram distance for histogram %s of %s', idx, len(self.histograms))
-            f1 = open(self.path+'_comparison.pickle', mode='a+b')
-            results = Parallel(n_jobs=num_cores)(delayed(self.computeDistance)(h1) for h1 in self.histograms)
-        print len(results)
-
-    def compute_comparison_product(self):
-        temp_dist = []
-         #TODO
-        # try to remove double loop, we could do pairwise recursive comparison, and remove the ones which we compared
-        start = timer()
-        f1 = open(self.path+'_comparison.pickle', mode='a+b')
-        temp_dist = []
-        i = 0
-        for h1, h2 in itertools.product(self.histograms, repeat=2):
-            #print h1 == h2
-            # product('ABCD', 'xy') --> Ax Ay Bx By Cx Cy Dx Dy
-            vector_distance =  self.dist_function.compute_distance(h1,h2)
-            if len(self.histograms)==i:
-                end = timer()
-                self.logger.debug('Time to run iter.product(): %s', end-start)
-                cPickle.dump(temp_dist,f1)
-                temp_dist = []
-                start = timer()
-
-                i=0
-            i += 1
-
-        f1.close()
-
-    def compute_comparison_nested(self):
-        temp_dist = []
-        for idx,h1 in enumerate(self.histograms):
-            start = timer()
-            self.logger.debug('Computing histogram distance for histogram %s of %s', idx, len(self.histograms))
-            f1 = open(sys.argv[1]+'_comparison.pickle', mode='a+b')
-            for h2 in self.histograms:
-                vector_distance =  self.dist_function.compute_distance(h1,h2)
-                temp_dist.append(vector_distance)
-            end = timer()
-            self.logger.debug('Time to run iter.product(): %s', end-start)
-            cPickle.dump(temp_dist,f1)
-            temp_dist = []
-            f1.close()
-
     def compute_comparison_pairwise(self):
-        pass
-        # h1c = 0
-        # h2c = 0
-        # all_list = []
-        # [self.dist_function.compute_distance(h1,h2) for h1,h2 in itertools.izip(self.histograms,self.histograms)]
-        # for h1, h2 in itertools.product(self.histograms, repeat=2):
-
-        #     vector_distance =  self.dist_function.compute_distance(h1,h2)
-        #     all_list.append({})
-        # all_dist = []
-        # for idx,h1 in enumerate(self.histograms):
-        #     value_h1 = 'h'+str(idx)
-        #     start = timer()
-        #     self.logger.debug('Computing histogram distance for histogram %s of %s', idx, len(self.histograms))
-        #     for idy, h2 in enumerate(self.histograms):
-        #         value_h2 = 'h'+str(idx)
-        #         print filter(lambda histogram: histogram['h1'] == value_h1 or value_h2, all_dist)
-        #         if()
-        #         vector_distance =  self.dist_function.compute_distance(h1,h2)
-        #         all_dist.append({'h1':value_h1, 'h2':value_h2,'dist':vector_distance})
-        #     end = timer()
-        #     self.logger.debug('Time to run iter.product(): %s', end-start)
-
-
-    def compute_comparison_pairwise(self):
-
+        self.logger.info('Computing pairwise comparison')
         dictionary = AutoVivification()
 
         for idh1, h1 in enumerate(self.histograms):
@@ -176,10 +103,11 @@ class ImageSimilarity():
             self.logger.debug('Time to run iter.product(): %s', end-start)
             cPickle.dump(dist,f1)
             f1.close()
-            #self.all_dist.append(dist)
 
-    def compute_image_similarity(self):
+    def compute_image_similarity(self, tfidf=False):
         self.logger.info('Computing histogram distances...')
+        if tfidf:
+            self.tfidf_weighing()
         #self.compute_comparison_nested()
         self.compute_comparison_pairwise()
         #self.compute_comparison_parallel()
@@ -187,4 +115,4 @@ class ImageSimilarity():
 
 if __name__ == '__main__':
     image_similarity = ImageSimilarity(path=sys.argv[1])
-    image_similarity.compute_image_similarity()
+    image_similarity.compute_image_similarity(tfidf=True)

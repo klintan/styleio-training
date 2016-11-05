@@ -53,8 +53,9 @@ class PatternHistograms:
             words = self.km.predict(features.reshape(-1, 200))
 
             histogram = np.bincount(words,minlength = self.vocab_size)
+
             if normalize_histogram:
-               histogram = self.nnormalize_histogram(histogram)
+               histogram = self.normalize_histogram(histogram)
 
             hists.append(histogram)
             words_1.append(words)

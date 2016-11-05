@@ -12,7 +12,7 @@ import sys
 sys.path.append('utils')
 import imtools
 import os
-
+import yaml
 import skimage
 from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 
@@ -24,10 +24,12 @@ logging.basicConfig(level=logging.DEBUG)
 #Error handling:
 #File not found, directory not created
 class PrepareImages:
-    def __init__(self, path, size=(128,128)):
+    def __init__(self, size=(128,128)):
+        self.config = yaml.safe_load(open("config.yml"))['preprocessing']
         self.logger = logging.getLogger(__name__)
-        self.path = path
-        self.im_list = imtools.get_imlist(path)
+        self.path = self.config['path']
+        self.experiment_name = self.config['experiment_name']
+        self.im_list = imtools.get_imlist(self.config['path'])
         self.all_images_data = []
         self.size = size#200,200
         self.datagen = ImageDataGenerator(
@@ -88,7 +90,7 @@ class PrepareImages:
         self.logger.info('Finished processing images')
 
 if __name__ == '__main__':
-    prepIm = PrepareImages(sys.argv[1])
+    prepIm = PrepareImages()
     #prepIm.imagePrep()
     prepIm.kerasPrep()
 
