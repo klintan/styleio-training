@@ -24,14 +24,14 @@ logging.basicConfig(level=logging.DEBUG)
 #Error handling:
 #File not found, directory not created
 class PrepareImages:
-    def __init__(self, size=(128,128)):
+    def __init__(self):
         self.config = yaml.safe_load(open("config.yml"))['preprocessing']
         self.logger = logging.getLogger(__name__)
         self.path = self.config['path']
         self.experiment_name = self.config['experiment_name']
         self.im_list = imtools.get_imlist(self.config['path'])
         self.all_images_data = []
-        self.size = size#200,200
+        self.size = self.config['img_size']
         self.datagen = ImageDataGenerator(
                 featurewise_center=True,
                 featurewise_std_normalization=False)
@@ -46,7 +46,7 @@ class PrepareImages:
         all_images = np.asarray(self.all_images_data)
         self.logger.info('Start processing images using Keras...')
         for idx, im_name in enumerate(self.im_list):
-            self.logger.debug('Processing image %s', im_name)
+            self.logger.debug("Processing image %s, %s out of %s ", im_name, idx, len(self.im_list))
             if idx==0:
                 img = load_img(im_name, target_size=self.size)  # this is a PIL image
                 all_images = img_to_array(img)  # this is a Numpy array with shape (3, 150, 150)
@@ -66,7 +66,7 @@ class PrepareImages:
         #the .flow() command below generates batches of randomly transformed images
         #and saves the results to the `preview/` directory
         i = 0
-        for batch in self.datagen.flow(all_images, batch_size=1,save_to_dir=self.path+'_processed', save_format='jpeg'):
+        for batch in self.datagen.flow(all_images, shuffle=False, batch_size=1,save_to_dir=self.path+'_processed', save_format='jpeg'):
             i += 1
             if i > len(self.im_list):
                 break  # otherwise the generator would loop indefinitely

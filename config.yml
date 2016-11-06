@@ -1,6 +1,9 @@
 preprocessing:
     experiment_name: localhost
-    path: wallpapers
+    path: wallpapers_small
+    img_size:
+      - 227
+      - 227
 
 vocabulary:
     preprocessing_queue:

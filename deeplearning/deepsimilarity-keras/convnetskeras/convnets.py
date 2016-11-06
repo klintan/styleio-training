@@ -6,9 +6,9 @@ from keras.optimizers import SGD
 import numpy as np
 from scipy.misc import imread, imresize, imsave
 
-from convnetskeras.customlayers import convolution2Dgroup, crosschannelnormalization, \
+from customlayers import convolution2Dgroup, crosschannelnormalization, \
     splittensor, Softmax4D
-from convnetskeras.imagenet_tool import synset_to_id, id_to_synset,synset_to_dfs_ids
+from imagenet_tool import synset_to_id, id_to_synset,synset_to_dfs_ids
 
 
 def convnet(network, weights_path=None, heatmap=False,
@@ -316,6 +316,9 @@ def preprocess_image_batch(image_paths, img_size=None, crop_size=None, color_mod
         return img_batch
 
 
+
+
+
 if __name__ == "__main__":
     ### Here is a script to compute the heatmap of the dog synsets.
     ## We find the synsets corresponding to dogs on ImageNet website
@@ -324,7 +327,7 @@ if __name__ == "__main__":
     # Most of the synsets are not in the subset of the synsets used in ImageNet recognition task.
     ids = np.array([id_ for id_ in ids if id_ is not None])
 
-    im = preprocess_image_batch(['dog.jpg'], color_mode="rgb")
+    im = preprocess_image_batch(['examples/dog.jpg'], color_mode="rgb")
 
     # Test pretrained model
     sgd = SGD(lr=0.1, decay=1e-6, momentum=0.9, nesterov=True)

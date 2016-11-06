@@ -21,3 +21,6 @@ floors_processed
 pseudocode_nestedfor.py
 tiles_processed
 wallpapers_small
+wallpapers_small_processed_128
+wallpapers_small_processed_227
+images_vgg16
