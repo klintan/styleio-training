@@ -12,14 +12,16 @@ import cPickle
 import numpy as np
 from jinja2 import Template, Environment, PackageLoader
 import logging
+import yaml
 
 logging.basicConfig(level=logging.INFO)
 
 class EvaluationFramework():
-    def __init__(self, path):
-        self.path = path
+    def __init__(self):
+        self.config = yaml.safe_load(open("../config.yml"))['html']
+        self.path = self.config['path']
         self.histograms = None
-        self.im_list = imtools.get_imlist(path)
+        self.im_list = imtools.get_imlist(self.config['path'])
         self.all_scores=[]
         self.logger = logging.getLogger(__name__)
         self.html= None
@@ -64,7 +66,7 @@ class EvaluationFramework():
                     json[idx]['img'] = self.im_list[image];
                     continue
 
-                self.html += '<img src='+ self.im_list[image]+'>'
+                self.html += '<img src='+ self.im_list[image]+' width="'+str(100)+'" height="'+str(100)+'">'
                 img_source = self.im_list[image]
                 #self.html += '<p>Score:'+ str(dist[image])+'</p>'
                 json[idx]['similar'].append({"img":self.im_list[image],"pattern": str(dist[image]),"color":""})
@@ -85,5 +87,5 @@ class EvaluationFramework():
 
 
 if __name__ == '__main__':
-    ef = EvaluationFramework(path=sys.argv[1])
+    ef = EvaluationFramework()
     ef.generate_html()

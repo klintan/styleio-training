@@ -1,34 +1,28 @@
 preprocessing:
-    experiment_name: localhost
+    experiment_name: tdifd
     path: wallpapers_small
     img_size:
       - 227
       - 227
 
 vocabulary:
-    preprocessing_queue:
-        - preprocessing.scale_and_center
-        - preprocessing.dot_reduction
-        - preprocessing.connect_lines
-    use_anonymous: yes
 
 histograms:
-    preprocessing_queue:
-        - preprocessing.scale_and_center
-        - preprocessing.dot_reduction
-        - preprocessing.connect_lines
-    use_anonymous: yes
 
 tfidf:
-    preprocessing_queue:
-        - preprocessing.scale_and_center
-        - preprocessing.dot_reduction
-        - preprocessing.connect_lines
-    use_anonymous: yes
 
 comparisons:
-    preprocessing_queue:
-        - preprocessing.scale_and_center
-        - preprocessing.dot_reduction
-        - preprocessing.connect_lines
-    use_anonymous: yes
+
+html:
+    path: ../resources/wallpapers_small_processed_227
+
+deep_feature_extraction:
+  experiment_name:  a
+  outputlayer: 20
+  path: ../resources/wallpapers_small_processed_227
+  img_size:
+    - 227
+    - 227
+  save_features: yes
+
+

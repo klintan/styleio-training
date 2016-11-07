@@ -25,7 +25,7 @@ logging.basicConfig(level=logging.DEBUG)
 #File not found, directory not created
 class PrepareImages:
     def __init__(self):
-        self.config = yaml.safe_load(open("config.yml"))['preprocessing']
+        self.config = yaml.safe_load(open("../config.yml"))['preprocessing']
         self.logger = logging.getLogger(__name__)
         self.path = self.config['path']
         self.experiment_name = self.config['experiment_name']
