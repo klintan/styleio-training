@@ -31,6 +31,7 @@ class EvaluationFramework():
         #jinja 2
         template_dir = os.path.dirname(os.path.abspath(__file__))
         env = Environment(loader=FileSystemLoader(template_dir + "/templates"),trim_blocks=True)
+        env.autoescape = False
         self.template = env.get_template('annotate.html')
         self.load_comparison()
 
@@ -62,7 +63,7 @@ class EvaluationFramework():
 
                 img_path = os.path.normpath(self.im_list[image])
                 img_source = "/".join(img_path.split(os.sep)[-2:])
-                img_row.append({"src":img_source, "score":str(dist[image])})
+                img_row.append({"src":img_source, "score":str(dist[image]), "id":idy})
 
                 #self.html += '<img src='+ self.im_list[image]+' width="'+str(100)+'" height="'+str(100)+'">'
                 #img_source = self.im_list[image]
