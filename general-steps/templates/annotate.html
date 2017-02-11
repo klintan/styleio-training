@@ -1,0 +1,13 @@
+ {% extends "main.html" %}
+
+{% block content %}
+ {% for row in all_images -%}
+<div class="row">
+    <div class="col-lg-12">
+     {% for img in row -%}
+            <img src="{{img.src}}" alt="{{img.score}}" height="100" width="100">
+        {%- endfor %}
+    </div>
+</div>
+{%- endfor %}
+{% endblock %}

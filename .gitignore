@@ -7,7 +7,6 @@ tiles
 *.pickle
 *.txt
 runs
-*.html
 wallpapers_new
 **/convnets-keras
 **/tiefvision
