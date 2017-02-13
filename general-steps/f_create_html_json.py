@@ -10,7 +10,7 @@ import imtools
 import pickle
 import cPickle
 import numpy as np
-from jinja2 import Template, Environment, PackageLoader, FileSystemLoader
+from jinja2 import Template, Environment, PackageLoader, FileSystemLoader, select_autoescape
 import logging
 import yaml
 import os
@@ -30,8 +30,7 @@ class EvaluationFramework():
         self.all_data = []
         #jinja 2
         template_dir = os.path.dirname(os.path.abspath(__file__))
-        env = Environment(loader=FileSystemLoader(template_dir + "/templates"),trim_blocks=True)
-        env.autoescape = False
+        env = Environment(loader=FileSystemLoader(template_dir + "/templates"),trim_blocks=True, autoescape=select_autoescape(enabled_extensions=('html', 'xml'), default_for_string=True))
         self.template = env.get_template('annotate.html')
         self.load_comparison()
 
@@ -53,22 +52,12 @@ class EvaluationFramework():
         for idx,dist in enumerate(self.all_dist):
             sort_index = np.argsort(dist)
             top20 = sort_index[0:20]
-            json.append({"img":"","similar":[]})
             img_index = str(idx)
             img_row = []
             for idy,image in enumerate(top20):
-                if idy == 0:
-                    json[idx]['img'] = self.im_list[image];
-                    continue
-
                 img_path = os.path.normpath(self.im_list[image])
                 img_source = "/".join(img_path.split(os.sep)[-2:])
-                img_row.append({"src":img_source, "score":str(dist[image]), "id":idy})
-
-                #self.html += '<img src='+ self.im_list[image]+' width="'+str(100)+'" height="'+str(100)+'">'
-                #img_source = self.im_list[image]
-                #self.html += '<p>Score:'+ str(dist[image])+'</p>'
-                #json[idx]['similar'].append({"img":self.im_list[image],"pattern": str(dist[image]),"color":""})
+                img_row.append({"src":img_source, "score":str(dist[image]), "id":idx})
 
             self.all_data.append(img_row)
             if idx == 500:
@@ -80,10 +69,14 @@ class EvaluationFramework():
         with open(self.path+'.html', 'wb') as f1:
             cPickle.dump(self.html, f1)
 
+    def save_json(self):
+        with open(self.path+'.json', 'wb') as f3:
+            cPickle.dump(JSON.dumps(self.json), f3)
+
     def render_html(self):
         # jinja2
         with open(self.path+'_jinja.html', 'wb') as f2:
-            cPickle.dump(self.template.render(all_images=self.all_data).encode( "utf-8" ) ,f2)
+            f2.write(self.template.render(all_images=self.all_data).encode( "utf-8" ))
 
 if __name__ == '__main__':
     ef = EvaluationFramework()

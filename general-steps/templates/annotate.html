@@ -9,9 +9,9 @@
     <div class="col-lg-12">
      {% for img in row -%}
             <img src="{{img.src}}" alt="{{img.score}}" height="100" width="100">
-            <button type="button" class="btn btn-secondary" ng-click="row_annotation({{img.id}}, 'neutral', '{{img.src}}')">Neutral</button>
-            <button type="button" class="btn btn-success" ng-click="row_annotation({{img.id}}, 'positive', '{{img.src}}')">H+</button>
-            <button type="button" class="btn btn-danger" ng-class="" ng-click="row_annotation({{img.id}}, 'negative', '{{img.src}}')">H-</button>
+            <button type="button" class="btn btn-secondary" ng-click="row_annotation({{img.id}}, 'neutral', '{{img.src | e}}')">Neutral</button>
+            <button type="button" class="btn btn-success" ng-click="row_annotation({{img.id}}, 'positive', '{{img.src | e}}')">H+</button>
+            <button type="button" class="btn btn-danger" ng-click="row_annotation({{img.id}}, 'negative', '{{img.src | e}}')">H-</button>
         {%- endfor %}
     </div>
 </div>
